@@ -10,7 +10,7 @@ function index(req, res){
   .then(tacos => {
     //do something with the tacos
     res.render("tacos/index", {
-      title: "🌮 ",
+      title: "🌮",
       tacos,
     })
   })
@@ -20,8 +20,34 @@ function index(req, res){
   })
 }
 
+function create(req, res) {
+  req.body.owner = req.user.profile
+	req.body.tasty = !!req.body.tasty
+  Taco.create(req.body)
+  .then(taco => {
+    res.redirect('/tacos')
+  })
+  .catch(err => {
+    console.log(err)
+    res.redirect('/tacos')
+  })
+}
 
+function show(req, res){
+  Taco.findById(req.params.id)
+  .populate("owner")
+  res.render("/tacos/show", {
+    taco,
+    title:"🌮 show"
+  })
+  .catch(err => {
+    console.log(err)
+    res.redirect('/tacos')
+  })
+}
 
 export {
-  index
+  index,
+  create,
+  show
 }
